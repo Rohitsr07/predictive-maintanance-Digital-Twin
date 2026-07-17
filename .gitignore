@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+.ipynb_checkpoints/
+
+notebook/Digital_Twin.ipynb
+artifacts/feature_importance.csv
+
+*.pyc
+*.pyo
+*.pyd
+
+.env
+.DS_Store
+Thumbs.db
