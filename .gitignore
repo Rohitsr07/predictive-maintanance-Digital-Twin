@@ -1,20 +1,20 @@
+
+# Python virtual environments
 venv/
+.venv/
+
+# Python cache
 __pycache__/
-.ipynb_checkpoints/
-
-notebook/Digital_Twin.ipynb
-artifacts/feature_importance.csv
-
 *.pyc
 *.pyo
 *.pyd
 
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Environment secrets
 .env
+
+# Operating system files
 .DS_Store
 Thumbs.db
-.venv/
-.venv/
-__pycache__/
-*.pyc
-.env
-.ipynb_checkpoints/
