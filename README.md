@@ -214,12 +214,16 @@ Interactively modify sensor values to observe:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Rohitsr07/predictive-maintanance-Digital-Twin.git
+cd predictive-maintanance-Digital-Twin
 ```
 
 ### 2. Install Dependencies
 
 ```bash
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+# source .venv/bin/activate   # macOS / Linux
 pip install -r requirements.txt
 ```
 
@@ -228,6 +232,37 @@ pip install -r requirements.txt
 ```bash
 streamlit run app/app.py
 ```
+
+The dashboard opens at http://localhost:8501.
+
+---
+
+## Docker
+
+```bash
+docker build -t pdm-digital-twin .
+docker run -p 8501:8501 pdm-digital-twin
+```
+
+The image contains only the app and the trained artifacts, so no training runs at startup.
+
+---
+
+## Deployment (Streamlit Community Cloud)
+
+1. Sign in at https://share.streamlit.io with GitHub.
+2. Click **Create app** and select this repository, branch `main`, main file `app/app.py`.
+3. Under **Advanced settings**, choose Python **3.12**.
+4. Click **Deploy**.
+
+---
+
+## Maintenance Updates
+
+- Re-serialized the XGBoost model with XGBoost 3.x, removing the version-mismatch warning on load (predictions unchanged).
+- Migrated deprecated `use_container_width` arguments to `width="stretch"` for current Streamlit releases.
+- Added a Dockerfile, `.dockerignore`, and Streamlit server config for containerized deployment.
+- Cleared notebook outputs to keep the repository free of machine-specific paths.
 
 ---
 

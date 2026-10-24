@@ -12,3 +12,4 @@ artifacts/feature_importance.csv
 .env
 .DS_Store
 Thumbs.db
+.venv/

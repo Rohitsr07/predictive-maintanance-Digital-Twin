@@ -147,7 +147,7 @@ if page == PAGES[0]:
         labels={"Health_Index": "Health index (%)"},
     )
     fig.update_layout(bargap=0.05, height=350)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     st.markdown("### Project summary")
     st.info(
@@ -166,7 +166,7 @@ elif page == PAGES[1]:
     st.subheader("Data Engineering Pipeline")
 
     st.markdown("**Processed training data preview**")
-    st.dataframe(train_df.head(8), use_container_width=True)
+    st.dataframe(train_df.head(8), width="stretch")
     st.caption(f"Shape: {train_df.shape}")
 
     st.markdown("### Constant / zero-variance features removed")
@@ -198,32 +198,32 @@ elif page == PAGES[2]:
     st.subheader("Exploratory Data Analysis")
 
     st.markdown("### Dataset statistics")
-    st.dataframe(train_df[FEATURE_COLS + ["RUL"]].describe().T, use_container_width=True)
+    st.dataframe(train_df[FEATURE_COLS + ["RUL"]].describe().T, width="stretch")
 
     c1, c2 = st.columns(2)
     with c1:
         st.markdown("### RUL distribution (clipped)")
         fig = px.histogram(train_df, x="RUL", nbins=40)
         fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     with c2:
         st.markdown("### Engine life distribution")
         life_dist = train_df.groupby("engine_id")["cycle"].max()
         fig = px.histogram(life_dist, nbins=25, labels={"value": "Total cycles to failure"})
         fig.update_layout(height=350, showlegend=False)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
     st.markdown("### Correlation heatmap")
     corr = train_df[FEATURE_COLS + ["RUL"]].corr()
     fig = px.imshow(corr, color_continuous_scale="RdBu_r", zmin=-1, zmax=1)
     fig.update_layout(height=500)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     st.markdown(f"### Sensor trend — engine {selected_engine}")
     eng_df = train_df[train_df["engine_id"] == selected_engine]
     fig = px.line(eng_df, x="cycle", y=selected_sensor)
     fig.update_layout(height=350)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 # ==================================================================
 # PAGE — MODEL PERFORMANCE
@@ -244,7 +244,7 @@ elif page == PAGES[3]:
     importance = pd.Series(model.feature_importances_, index=FEATURE_COLS).sort_values()
     fig = px.bar(importance, orientation="h")
     fig.update_layout(height=400, showlegend=False)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     if test_pred_df is not None:
         st.markdown("### Actual vs predicted RUL (official test set)")
@@ -252,14 +252,14 @@ elif page == PAGES[3]:
         lo, hi = 0, RUL_CLIP
         fig.add_shape(type="line", x0=lo, y0=lo, x1=hi, y1=hi, line=dict(color="red", dash="dash"))
         fig.update_layout(height=400)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
 
         residuals = test_pred_df["Actual_RUL"] - test_pred_df["Predicted_RUL"]
         fig = px.scatter(x=test_pred_df["Predicted_RUL"], y=residuals,
                           labels={"x": "Predicted RUL", "y": "Residual"}, opacity=0.5)
         fig.add_hline(y=0, line_dash="dash", line_color="red")
         fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     else:
         st.info(
             "Actual-vs-predicted and residual plots need `test_predictions.csv` "
@@ -284,7 +284,7 @@ elif page == PAGES[4]:
 
         fig_wf, ax = plt.subplots(figsize=(10, 6))
         shap.plots.waterfall(shap_values_engine[0], max_display=10, show=False)
-        st.pyplot(fig_wf, use_container_width=True)
+        st.pyplot(fig_wf, width="stretch")
         plt.close(fig_wf)
 
     st.markdown("### Global feature impact — SHAP summary plot")
@@ -292,7 +292,7 @@ elif page == PAGES[4]:
     shap_values_all = explainer(sample)
     fig_summary, ax2 = plt.subplots(figsize=(8, 5))
     shap.plots.beeswarm(shap_values_all, max_display=10, show=False)
-    st.pyplot(fig_summary, use_container_width=True)
+    st.pyplot(fig_summary, width="stretch")
     plt.close(fig_summary)
 
 # ==================================================================
@@ -309,14 +309,14 @@ elif page == PAGES[5]:
             title={"text": "Predicted RUL (cycles)"},
             gauge={"axis": {"range": [0, RUL_CLIP]}, "bar": {"color": "#2a78d6"}}))
         fig.update_layout(height=280)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     with g2:
         fig = go.Figure(go.Indicator(
             mode="gauge+number", value=twin["Health_Index"],
             title={"text": "Health index (%)"},
             gauge={"axis": {"range": [0, 100]}, "bar": {"color": RISK_COLOR[twin["risk"]]}}))
         fig.update_layout(height=280)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     with g3:
         st.markdown("#### Failure risk")
         st.markdown(f"<h2 style='color:{RISK_COLOR[twin['risk']]}'>{twin['risk']}</h2>",
@@ -330,7 +330,7 @@ elif page == PAGES[5]:
             st.success("No action needed. Continue routine monitoring.")
 
     st.markdown("### Snapshot sensor panel (this engine's sampled in-service cycle)")
-    st.dataframe(twin[FEATURE_COLS].to_frame().T, use_container_width=True)
+    st.dataframe(twin[FEATURE_COLS].to_frame().T, width="stretch")
     st.caption(f"Snapshot cycle {int(twin['cycle'])} — sampled from the 60-90% point of this "
                "engine's life, seeded for reproducibility (see notebook section 10).")
 
@@ -352,7 +352,7 @@ elif page == PAGES[6]:
     fig = px.imshow(grid, color_continuous_scale=[[0, "#008300"], [0.5, "#eda100"], [1, "#e34948"]],
                      labels={"color": "Risk"})
     fig.update_layout(height=450, coloraxis_showscale=False)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     st.caption("Healthy · Schedule Maintenance · Immediate Maintenance — one cell per engine")
 
     c1, c2 = st.columns(2)
@@ -392,7 +392,7 @@ elif page == PAGES[7]:
         go.Bar(name="Scheduled maintenance", x=["Cost per engine"], y=[sched_cost], marker_color="#008300"),
     ])
     fig.update_layout(barmode="group", height=350)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 # ==================================================================
 # PAGE — WHAT-IF SIMULATOR
@@ -433,7 +433,7 @@ elif page == PAGES[9]:
     st.markdown("### Engine summary")
     st.dataframe(
         snapshot_df[["engine_id", "Predicted_RUL", "Health_Index", "risk"]].sort_values("Predicted_RUL"),
-        use_container_width=True,
+        width="stretch",
     )
 
     st.markdown("### Download PDF report")
