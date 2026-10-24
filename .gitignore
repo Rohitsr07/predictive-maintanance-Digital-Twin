@@ -13,3 +13,8 @@ artifacts/feature_importance.csv
 .DS_Store
 Thumbs.db
 .venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+.ipynb_checkpoints/
